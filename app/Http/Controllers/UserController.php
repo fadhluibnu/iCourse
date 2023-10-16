@@ -28,7 +28,7 @@ class UserController extends Controller
             }
 
             DB::commit();
-
+            return false;
         } catch (\Throwable $th) {
             DB::rollBack(); 
             return response()->json([
@@ -42,7 +42,9 @@ class UserController extends Controller
     {
         DB::beginTransaction();
         try {
-            $store = User::create($storeUserRequest->validated());
+            $validate = $storeUserRequest->validated();
+            $validate['password'] = Hash::make($validate['password']);
+            $store = User::create($validate);
             $token = $store->createToken($store->username)->plainTextToken;
             DB::commit();
             return response()->json([
@@ -53,7 +55,7 @@ class UserController extends Controller
             DB::rollBack();
             return response()->json([
                 'status' => 400,
-                'message' => 'bad request'
+                'message' => $th->getMessage()
             ], 400);
         }
     }
