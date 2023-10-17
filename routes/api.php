@@ -21,16 +21,23 @@ use Illuminate\Support\Facades\Route;
 //});
 
 
+// post
 Route::get('/posts', [PostController::class, 'index']);
 Route::get('/posts/{slug}', [PostController::class, 'show']);
 
 Route::middleware('guest')->group(function () {
+
+    // user
     Route::post('/register', [UserController::class, 'register']);
     Route::post('/login', [UserController::class, 'authenticate']);
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+    // user
+    Route::get('/profile/{username}', [UserController::class, 'profileWithPost']);
+    Route::put('/profile/{username}', [UserController::class, 'update']);
     Route::post('/logout', [UserController::class, 'logout']);
 
+    // post
     Route::resource('/posts', PostController::class)->except('index', 'show');
 });
