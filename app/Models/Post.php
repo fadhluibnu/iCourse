@@ -16,6 +16,7 @@ class Post extends Model
         'slug',
         'tag',
         'category',
+        'cover',
         'body'
     ];
 

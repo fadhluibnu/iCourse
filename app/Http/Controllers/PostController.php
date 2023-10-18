@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StorePostRequest;
+use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\PostCollection;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 
 class PostController extends Controller
 {
@@ -56,7 +58,19 @@ class PostController extends Controller
     {
         DB::beginTransaction();
         try {
-            $store = Post::create($storePostRequest->validated());
+            $validated = $storePostRequest->validated();
+
+            $photo = fopen($storePostRequest->file('cover'), 'r');
+            $cover = Http::acceptJson()->attach(
+                'image',
+                $photo
+            )->post('https://image-api-icourse.000webhostapp.com/api/upload-image', [
+                'code' => '38@0$%8%^8/8471'
+            ]);
+
+            $validated['cover'] = $cover['image'];
+
+            $store = Post::create($validated);
             DB::commit();
             return response()->json([
                 'status' => 200,
@@ -81,7 +95,7 @@ class PostController extends Controller
     public function show($slug)
     {
         try {
-            $post = new PostCollection(Post::where('slug', $slug)->with('user')->first());
+            $post = new PostCollection(Post::where('slug', $slug)->with('user')->firstOrFail());
             return response()->json([
                 'status' => 200,
                 'message' => 'success',
@@ -114,9 +128,36 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $slug)
+    public function update(UpdatePostRequest $updatePostRequest, $slug)
     {
-        return $slug;
+        DB::beginTransaction();
+        try {
+            $validated = $updatePostRequest->validated();
+            if ($updatePostRequest->file('cover')) {
+                $photo = fopen($updatePostRequest->file('cover'), 'r');
+                $profil = Http::acceptJson()->attach(
+                    'image',
+                    $photo
+                )->post('https://image-api-icourse.000webhostapp.com/api/upload-image', [
+                    'code' => '38@0$%8%^8/8471'
+                ]);
+                $validated['cover'] = $profil['image'];
+            }
+            $update = Post::where('slug', $slug)->firstOrFail();
+            $update->update($validated);
+            DB::commit();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'Updated successfully',
+            ],200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 400,
+                'message' => $th->getMessage()
+            ], 400);
+        }
     }
 
     /**
@@ -125,8 +166,24 @@ class PostController extends Controller
      * @param  \App\Models\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $post)
+    public function destroy($slug)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $delete = Post::where('slug', $slug)->firstOrFail();
+            $delete->delete();
+            DB::commit();
+
+            return response()->json([
+                'status' => 200,
+                'message' => 'deleted successfully'
+            ], 200);
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return response()->json([
+                'status' => 400,
+                'message' => $th->getMessage()
+            ], 400);
+        }
     }
 }

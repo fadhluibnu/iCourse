@@ -30,6 +30,7 @@ class StorePostRequest extends FormRequest
             'slug' => 'required|unique:posts,slug',
             'tag' => 'required',
             'category' => 'required',
+            'cover' => 'required|mimes:jpg,bmp,png,webp',
             'body' => 'required',
         ];
     }

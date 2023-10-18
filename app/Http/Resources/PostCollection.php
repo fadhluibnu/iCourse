@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Handler\HandlerEverything;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
@@ -15,14 +16,22 @@ class PostCollection extends JsonResource
      */
     public function toArray($request)
     {
+        $handler = new HandlerEverything();
         return [
-            'author' => $this->user,
+            'author' => [
+                "name" => $this->user->name,
+                "photo" => $this->user->photo,
+                "username" => $this->user->username,
+            ],
             'title' => $this->title,
             'meta_desc' => $this->meta_desc,
             'slug' => $this->slug,
             'tag' => $this->tag,
             'category' => $this->category,
-            'body' => $this->body
+            'cover' => $this->cover,
+            'body' => $this->body,
+            'created_at' => $handler->dateFormat($this->created_at),
+            'updated_at' => $handler->dateFormat($this->updated_at),
         ];
     }
 }
