@@ -139,7 +139,12 @@ class UserController extends Controller
     public function profileWithPost($username)
     {
         try {
-            $data = new UserResource(User::where('username', $username)->with('posts')->first());
+            $data = new UserResource(User::where('username', $username)->with([
+                'posts' => [
+                    'user',
+                    'categories'
+                ]
+            ])->first());
             return response()->json([
                 'status' => 200,
                 'message' => 'Success',

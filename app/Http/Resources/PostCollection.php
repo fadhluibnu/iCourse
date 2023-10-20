@@ -27,7 +27,10 @@ class PostCollection extends JsonResource
             'meta_desc' => $this->meta_desc,
             'slug' => $this->slug,
             'tag' => $this->tag,
-            'category' => $this->category,
+            'category' => [
+                'title' => $this->categories->title,
+                'slug' => $this->categories->slug,
+            ],
             'cover' => $this->cover,
             'body' => $this->body,
             'created_at' => $handler->dateFormat($this->created_at),
