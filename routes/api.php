@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -25,6 +26,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/posts', [PostController::class, 'index']);
 Route::get('/posts/{slug}', [PostController::class, 'show']);
 
+// category
+Route::get('/category', [CategoryController::class, 'index']);
+Route::get('/category/{slug}', [CategoryController::class, 'show']);
+
 Route::middleware('guest')->group(function () {
 
     // user
@@ -40,4 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // post
     Route::resource('/posts', PostController::class)->except('index', 'show');
+
+    // category
+    Route::resource('/category', CategoryController::class)->except('index', 'show');
 });

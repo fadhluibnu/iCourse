@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreCategoryRequest;
 use App\Http\Requests\StorePostRequest;
-use App\Http\Requests\UpdatePostRequest;
-use App\Http\Resources\PostCollection;
-use App\Models\Post;
-use App\Models\User;
+use App\Http\Requests\UpdateCategoryRequest;
+use App\Http\Resources\CategoryResource;
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 
-class PostController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -21,20 +21,20 @@ class PostController extends Controller
     public function index()
     {
         try {
-            $posts = PostCollection::collection(Post::with('user')->get());
+            $categories = CategoryResource::collection(Category::with('posts.user')->get());
             return response()->json([
                 'status' => 200,
                 'message' => 'success',
-                'amount' => $posts->count(),
-                'datas' => $posts,
+                'amount' => $categories->count(),
+                'datas' => $categories,
             ], 200);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => 400,
-                'message' =>$th->getMessage(),
+                'message' => $th->getMessage(),
                 'amount' => null,
                 'datas' => null,
-            ],400);
+            ], 400);
         }
     }
 
@@ -45,7 +45,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        
+        //
     }
 
     /**
@@ -54,70 +54,72 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StorePostRequest $storePostRequest)
+    public function store(StoreCategoryRequest $storeCategoryRequest)
     {
         DB::beginTransaction();
         try {
-            $validated = $storePostRequest->validated();
+            $validated = $storeCategoryRequest->validated();
 
-            $photo = fopen($storePostRequest->file('cover'), 'r');
-            $cover = Http::acceptJson()->attach(
+            $photo = fopen($storeCategoryRequest->file('image'), 'r');
+            $image = Http::acceptJson()->attach(
                 'image',
                 $photo
             )->post('https://image-api-icourse.000webhostapp.com/api/upload-image', [
                 'code' => '38@0$%8%^8/8471'
             ]);
 
-            $validated['cover'] = $cover['image'];
+            $validated['image'] = $image['image'];
 
-            $store = Post::create($validated);
+            $store = Category::create($validated);
             DB::commit();
+
             return response()->json([
                 'status' => 200,
                 'message' => 'success',
                 'data' => $store
-            ],200);
+            ], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json([
                 'status' => 400,
                 'message' => $th->getMessage(),
                 'data' => null,
-            ],400);
+            ], 400);
         }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Post  $post
+     * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
     public function show($slug)
     {
         try {
-            $post = new PostCollection(Post::where('slug', $slug)->with('user')->firstOrFail());
+            $category = new CategoryResource(Category::where('slug', $slug)->with('posts.user')->firstOrFail());
+
             return response()->json([
                 'status' => 200,
                 'message' => 'success',
-                'data' => $post
-            ],200);
+                'data' => $category
+            ], 200);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => 404,
                 'message' => $th->getMessage(),
                 'data' => null,
-            ],404);
+            ], 404);
         }
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Post  $post
+     * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function edit(Post $post)
+    public function edit(Category $category)
     {
         //
     }
@@ -126,32 +128,35 @@ class PostController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Post  $post
+     * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdatePostRequest $updatePostRequest, $slug)
+    public function update(UpdateCategoryRequest $updateCategoryRequest, $slug)
     {
         DB::beginTransaction();
         try {
-            $validated = $updatePostRequest->validated();
-            if ($updatePostRequest->file('cover')) {
-                $photo = fopen($updatePostRequest->file('cover'), 'r');
-                $profil = Http::acceptJson()->attach(
+            $validated = $updateCategoryRequest->validated();
+
+            if ($updateCategoryRequest->file('image')) {
+                $photo = fopen($updateCategoryRequest->file('image'), 'r');
+                $image = Http::acceptJson()->attach(
                     'image',
                     $photo
                 )->post('https://image-api-icourse.000webhostapp.com/api/upload-image', [
                     'code' => '38@0$%8%^8/8471'
                 ]);
-                $validated['cover'] = $profil['image'];
-            }
-            $update = Post::where('slug', $slug)->firstOrFail();
-            $update->update($validated);
-            DB::commit();
 
+                $validated['image'] = $image['image'];
+            }
+
+            $category = Category::where('slug', $slug)->firstOrFail();
+            $category->update($validated);
+
+            DB::commit();
             return response()->json([
                 'status' => 200,
                 'message' => 'Updated successfully',
-            ],200);
+            ], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json([
@@ -164,15 +169,15 @@ class PostController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Post  $post
+     * @param  \App\Models\Category  $category
      * @return \Illuminate\Http\Response
      */
     public function destroy($slug)
     {
         DB::beginTransaction();
         try {
-            $delete = Post::where('slug', $slug)->firstOrFail();
-            $delete->delete();
+            $Category = Category::where('slug', $slug)->firstOrFail();
+            $Category->delete();
             DB::commit();
 
             return response()->json([

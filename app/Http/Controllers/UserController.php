@@ -8,6 +8,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
@@ -18,20 +19,24 @@ class UserController extends Controller
     {
         DB::beginTransaction();
         try {
-            $loginUserRequest->validated();
+            $validated = $loginUserRequest->validated();
 
-            $user = User::where('email', $loginUserRequest->email)->first();
+            $user = User::where('email', $loginUserRequest->email)->firstOrFail();
+            // return $loginUserRequest->password;
 
-            if ($user && Hash::check($user->password, $loginUserRequest->password)) {
+            if (Auth::attempt($validated)) {
                 $token = $user->createToken($user->username)->plainTextToken;
+                DB::commit();
                 return response()->json([
                     'user' => $user,
                     'token' => $token
                 ]);
             }
-
-            DB::commit();
-            return false;
+            
+            return response()->json([
+                'status' => '400',
+                'message' => 'Invalid login'
+            ], 400);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json([
