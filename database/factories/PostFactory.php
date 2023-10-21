@@ -26,8 +26,8 @@ class PostFactory extends Factory
             'slug' => fake()->slug(),
             'tag' => '#programming',
             'category' => Category::factory(),
-            'id_tutorial' => Tutorial::factory(),
-            'tutorial_order' => 1,
+            'id_tutorial' => "01hd9gn9cs20qqxw1vdrj88zhx",
+            'tutorial_order' => 2,
             'cover' => 'http://image-api-icourse.000webhostapp.com/public_html/image/drhpvNU5HddQ72Z11scj9rSxzbghxlUN5rCUWGE2.png',
             'body' => fake()->text()
         ];

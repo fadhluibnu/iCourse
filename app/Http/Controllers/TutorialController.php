@@ -20,7 +20,20 @@ class TutorialController extends Controller
     public function index()
     {
         try {
-            $tutorial = TutorialResource::collection(Tutorial::all());
+            $tutorial = TutorialResource::collection(Tutorial::with([
+                'post' => [
+                    'user',
+                    'categories',
+                    'comments' => [
+                        'replyComments'
+                    ],
+                    'tutorials',
+                ]
+            ])->with([
+                'post' => function ($query) {
+                    $query->orderBy('tutorial_order', 'asc');
+                } 
+            ])->get());
 
             return response()->json([
                 'status' => 200,

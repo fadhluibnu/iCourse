@@ -23,6 +23,7 @@ class TutorialResource extends JsonResource
             'slug' => $this->slug,
             'description' => $this->description,
             'level' => $this->level,
+            'posts' => PostCollection::collection($this->post),
             'created_at' => $handler->dateFormat($this->created_at),
             'updated_at' => $handler->dateFormat($this->updated_at),
         ];
