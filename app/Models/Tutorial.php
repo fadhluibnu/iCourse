@@ -15,5 +15,6 @@ class Tutorial extends Model
         'image',
         'slug',
         'description',
+        'level'
     ];
 }

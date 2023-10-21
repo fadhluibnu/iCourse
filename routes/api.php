@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ReplyCommentController;
+use App\Http\Controllers\TutorialController;
 use App\Http\Controllers\UserController;
 use App\Models\ReplyComment;
 use Illuminate\Http\Request;
@@ -39,6 +40,13 @@ Route::post('/comment', [CommentController::class, 'store']);
 // reply comment
 Route::post('/reply-comment', [ReplyCommentController::class, 'store']);
 
+// user
+Route::get('/profile/{username}', [UserController::class, 'profileWithPost']);
+
+// tutorial
+Route::get('/tutorial', [TutorialController::class, 'index']);
+Route::get('/tutorial/{slug}', [TutorialController::class, 'show']);
+
 Route::middleware('guest')->group(function () {
 
     // user
@@ -48,7 +56,6 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth:sanctum')->group(function () {
     // user
-    Route::get('/profile/{username}', [UserController::class, 'profileWithPost']);
     Route::put('/profile/{username}', [UserController::class, 'update']);
     Route::post('/logout', [UserController::class, 'logout']);
 
@@ -60,4 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // comments
     Route::resource('/comment', CommentController::class)->except('store');
+
+    // tutorial
+    Route::resource('/tutorial', TutorialController::class)->except('index', 'show');
 });
