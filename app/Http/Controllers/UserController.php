@@ -143,7 +143,9 @@ class UserController extends Controller
                 'posts' => [
                     'user',
                     'categories',
-                    'comments',
+                    'comments' => [
+                        'replyComments'
+                    ],
                 ]
             ])->first());
             return response()->json([

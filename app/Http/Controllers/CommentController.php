@@ -18,7 +18,7 @@ class CommentController extends Controller
     public function index()
     {
         try {
-            $comments = CommentsResource::collection(Comment::all());
+            $comments = CommentsResource::collection(Comment::with('replyComments')->get());
             return response()->json([
                 'status' => 200,
                 'message' => 'success',

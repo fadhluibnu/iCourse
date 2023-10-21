@@ -20,7 +20,7 @@ class Comment extends Model
     {
         return $this->belongsTo(Post::class, 'id_post');
     }
-    public function ReplyComments()
+    public function replyComments()
     {
         return $this->hasMany(ReplyComment::class, 'id_comment');
     }

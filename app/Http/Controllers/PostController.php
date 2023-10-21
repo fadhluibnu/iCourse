@@ -21,7 +21,13 @@ class PostController extends Controller
     public function index()
     {
         try {
-            $posts = PostCollection::collection(Post::with(['user', 'categories', 'comments'])->get());
+            $posts = PostCollection::collection(Post::with([
+                'user',
+                'categories',
+                'comments' => [
+                    'replyComments'
+                ]
+            ])->get());
             return response()->json([
                 'status' => 200,
                 'message' => 'success',
@@ -31,10 +37,10 @@ class PostController extends Controller
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => 400,
-                'message' =>$th->getMessage(),
+                'message' => $th->getMessage(),
                 'amount' => null,
                 'datas' => null,
-            ],400);
+            ], 400);
         }
     }
 
@@ -45,7 +51,6 @@ class PostController extends Controller
      */
     public function create()
     {
-        
     }
 
     /**
@@ -76,14 +81,14 @@ class PostController extends Controller
                 'status' => 200,
                 'message' => 'success',
                 'data' => $store
-            ],200);
+            ], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json([
                 'status' => 400,
                 'message' => $th->getMessage(),
                 'data' => null,
-            ],400);
+            ], 400);
         }
     }
 
@@ -96,18 +101,24 @@ class PostController extends Controller
     public function show($slug)
     {
         try {
-            $post = new PostCollection(Post::where('slug', $slug)->with(['user', 'categories', 'comments'])->firstOrFail());
+            $post = new PostCollection(Post::where('slug', $slug)->with([
+                'user', 
+                'categories', 
+                'comments' => [
+                    'replyComments'
+                ]
+            ])->firstOrFail());
             return response()->json([
                 'status' => 200,
                 'message' => 'success',
                 'data' => $post
-            ],200);
+            ], 200);
         } catch (\Throwable $th) {
             return response()->json([
                 'status' => 404,
                 'message' => $th->getMessage(),
                 'data' => null,
-            ],404);
+            ], 404);
         }
     }
 
@@ -151,7 +162,7 @@ class PostController extends Controller
             return response()->json([
                 'status' => 200,
                 'message' => 'Updated successfully',
-            ],200);
+            ], 200);
         } catch (\Throwable $th) {
             DB::rollBack();
             return response()->json([
