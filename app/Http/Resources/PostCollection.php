@@ -17,6 +17,7 @@ class PostCollection extends JsonResource
     public function toArray($request)
     {
         $handler = new HandlerEverything();
+        $NO_RELATIONSHIP_WITH_TUTORIAL = null;
         return [
             'id' => $this->id,
             'author' => [
@@ -35,6 +36,11 @@ class PostCollection extends JsonResource
             'cover' => $this->cover,
             'body' => $this->body,
             'comments' => CommentsResource::collection($this->comments),
+            'tutorial' => $this->id_tutorial != $NO_RELATIONSHIP_WITH_TUTORIAL ? [
+                'title' => $this->tutorials->title,
+                'slug' => $this->tutorials->slug,
+            ] : null,
+            'tutorial_order' => $this->tutorial_order,
             'created_at' => $handler->dateFormat($this->created_at),
             'updated_at' => $handler->dateFormat($this->updated_at),
         ];

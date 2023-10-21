@@ -26,7 +26,8 @@ class PostController extends Controller
                 'categories',
                 'comments' => [
                     'replyComments'
-                ]
+                ],
+                'tutorials',
             ])->get());
             return response()->json([
                 'status' => 200,
@@ -106,7 +107,8 @@ class PostController extends Controller
                 'categories', 
                 'comments' => [
                     'replyComments'
-                ]
+                ],
+                'tutorials',
             ])->firstOrFail());
             return response()->json([
                 'status' => 200,

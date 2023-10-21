@@ -17,4 +17,9 @@ class Tutorial extends Model
         'description',
         'level'
     ];
+
+    public function post()
+    {
+        return $this->hasMany(Post::class, 'id_tutorial');
+    }
 }

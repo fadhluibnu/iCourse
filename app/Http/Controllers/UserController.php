@@ -146,6 +146,7 @@ class UserController extends Controller
                     'comments' => [
                         'replyComments'
                     ],
+                    'tutorials',
                 ]
             ])->first());
             return response()->json([

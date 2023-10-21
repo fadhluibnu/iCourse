@@ -23,6 +23,8 @@ return new class extends Migration
             $table->foreignId('category');
             $table->string('cover');
             $table->text('body');
+            $table->foreignUuid('id_tutorial')->nullable();
+            $table->integer('tutorial_order')->default(false);
             $table->timestamps();
         });
     }

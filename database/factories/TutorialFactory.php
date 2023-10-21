@@ -17,7 +17,11 @@ class TutorialFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'title' => fake()->title(),
+            'image' => 'http://image-api-icourse.000webhostapp.com/public_html/image/drhpvNU5HddQ72Z11scj9rSxzbghxlUN5rCUWGE2.png',
+            'slug' => fake()->slug(),
+            'description' => fake()->text(),
+            'level' => 1
         ];
     }
 }

@@ -32,6 +32,10 @@ class Post extends Model
     {
         return $this->hasMany(Comment::class, 'id_post');
     }
+    public function tutorials()
+    {
+        return $this->belongsTo(Tutorial::class, 'id_tutorial');
+    }
     public function getRouteKeyName()
     {
         return 'slug';
