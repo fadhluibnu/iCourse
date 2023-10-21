@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
@@ -30,6 +31,9 @@ Route::get('/posts/{slug}', [PostController::class, 'show']);
 Route::get('/category', [CategoryController::class, 'index']);
 Route::get('/category/{slug}', [CategoryController::class, 'show']);
 
+// comment
+Route::post('/comment', [CommentController::class, 'store']);
+
 Route::middleware('guest')->group(function () {
 
     // user
@@ -48,4 +52,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // category
     Route::resource('/category', CategoryController::class)->except('index', 'show');
+
+    // comments
+    Route::resource('/comment', CommentController::class)->except('store');
 });

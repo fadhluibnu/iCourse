@@ -18,6 +18,7 @@ class PostCollection extends JsonResource
     {
         $handler = new HandlerEverything();
         return [
+            'id' => $this->id,
             'author' => [
                 "name" => $this->user->name,
                 "photo" => $this->user->photo,
