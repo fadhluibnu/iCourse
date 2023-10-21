@@ -142,7 +142,8 @@ class UserController extends Controller
             $data = new UserResource(User::where('username', $username)->with([
                 'posts' => [
                     'user',
-                    'categories'
+                    'categories',
+                    'comments',
                 ]
             ])->first());
             return response()->json([

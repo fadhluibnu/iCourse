@@ -21,7 +21,7 @@ class PostController extends Controller
     public function index()
     {
         try {
-            $posts = PostCollection::collection(Post::with(['user', 'categories'])->get());
+            $posts = PostCollection::collection(Post::with(['user', 'categories', 'comments'])->get());
             return response()->json([
                 'status' => 200,
                 'message' => 'success',
@@ -96,7 +96,7 @@ class PostController extends Controller
     public function show($slug)
     {
         try {
-            $post = new PostCollection(Post::where('slug', $slug)->with(['user', 'categories'])->firstOrFail());
+            $post = new PostCollection(Post::where('slug', $slug)->with(['user', 'categories', 'comments'])->firstOrFail());
             return response()->json([
                 'status' => 200,
                 'message' => 'success',

@@ -34,6 +34,7 @@ class PostCollection extends JsonResource
             ],
             'cover' => $this->cover,
             'body' => $this->body,
+            'comments' => CommentsResource::collection($this->comments),
             'created_at' => $handler->dateFormat($this->created_at),
             'updated_at' => $handler->dateFormat($this->updated_at),
         ];
