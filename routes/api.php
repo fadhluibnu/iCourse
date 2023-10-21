@@ -3,7 +3,9 @@
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\ReplyCommentController;
 use App\Http\Controllers\UserController;
+use App\Models\ReplyComment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,6 +35,9 @@ Route::get('/category/{slug}', [CategoryController::class, 'show']);
 
 // comment
 Route::post('/comment', [CommentController::class, 'store']);
+
+// reply comment
+Route::post('/reply-comment', [ReplyCommentController::class, 'store']);
 
 Route::middleware('guest')->group(function () {
 

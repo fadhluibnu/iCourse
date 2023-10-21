@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('reply_comments', function (Blueprint $table) {
             $table->uuid('id');
-            $table->foreignId('id_comment');
+            $table->foreignUuid('id_comment');
             $table->string('name');
             $table->string('author')->default(false);
             $table->text('body');
