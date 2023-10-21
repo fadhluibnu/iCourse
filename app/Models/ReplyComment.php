@@ -16,4 +16,9 @@ class ReplyComment extends Model
         'author',
         'body'
     ];
+
+    public function comment()
+    {
+        return $this->belongsTo(Comment::class, 'id_comment');
+    }
 }
