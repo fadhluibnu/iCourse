@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCommentRequest;
+use App\Http\Resources\CommentsResource;
 use App\Models\Comment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -16,7 +17,22 @@ class CommentController extends Controller
      */
     public function index()
     {
-        //
+        try {
+            $comments = CommentsResource::collection(Comment::all());
+            return response()->json([
+                'status' => 200,
+                'message' => 'success',
+                'amount' => $comments->count(),
+                'datas' => $comments
+            ], 200);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'status' => 400,
+                'message' => $th->getMessage(),
+                'amount' => null,
+                'datas' => null
+            ],400);
+        }
     }
 
     /**
